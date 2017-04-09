@@ -34,5 +34,17 @@
   "Role": {
     "dataSource": "db",
     "public": false
+  },
+  "Player": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "OffSeasonStat": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "NflTeam": {
+    "dataSource": "postgres",
+    "public": true
   }
 }

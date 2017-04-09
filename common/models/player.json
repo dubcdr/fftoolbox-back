@@ -1,0 +1,33 @@
+{
+  "name": "Player",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "schema": "fftoolbox",
+    "validateUpsert": true
+  },
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "required": true
+    },
+    "last_name": {
+      "type": "string",
+      "required": true
+    },
+    "suffix": {
+      "type": "string"
+    },
+    "position": {
+      "type": "string",
+      "required": true
+    },
+    "teamId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

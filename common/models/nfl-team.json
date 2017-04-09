@@ -1,0 +1,57 @@
+{
+  "name": "NflTeam",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "schema": "fftoolbox",
+    "validateUpsert": true
+  },
+  "properties": {
+    "abbr": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "qb1": {
+      "type": "number"
+    },
+    "qb2": {
+      "type": "number"
+    },
+    "wr1": {
+      "type": "number"
+    },
+    "wr2": {
+      "type": "number"
+    },
+    "wr3": {
+      "type": "number"
+    },
+    "rb1": {
+      "type": "number"
+    },
+    "rb2": {
+      "type": "number"
+    },
+    "rb3": {
+      "type": "number"
+    },
+    "te1": {
+      "type": "number"
+    },
+    "te2": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
