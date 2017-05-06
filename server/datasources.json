@@ -11,6 +11,7 @@
     "password": "password",
     "name": "postgres",
     "user": "postgres",
+    "schema": "fftoolbox",
     "connector": "postgresql"
   }
 }
