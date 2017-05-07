@@ -1,0 +1,26 @@
+{
+  "name": "OffWeekStat",
+  "base": "OffSeasonStat",
+  "idInjection": true,
+  "options": {
+    "postgresql": {
+      "schema": "fftoolbox",
+      "table": "off_week_stat"
+    },
+    "validateUpsert": true
+  },
+  "properties": {
+    "week": {
+      "type": "number",
+      "required": true
+    },
+    "opponentId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

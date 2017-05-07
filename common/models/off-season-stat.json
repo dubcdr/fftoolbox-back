@@ -3,7 +3,10 @@
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
-    "schema": "fftoolbox",
+    "postgresql": {
+      "schema": "fftoolbox",
+      "table": "off_season_stat"
+    },
     "validateUpsert": true
   },
   "properties": {
@@ -16,8 +19,7 @@
       "required": true
     },
     "gp": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "ps_yd": {
       "type": "number"

@@ -3,7 +3,10 @@
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
-    "schema": "fftoolbox",
+    "postgresql": {
+      "schema": "fftoolbox",
+      "table": "nfl_team"
+    },
     "validateUpsert": true
   },
   "properties": {
