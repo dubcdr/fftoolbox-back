@@ -6,4 +6,5 @@ var ds = app.dataSources.postgres;
 
 // ds.createModel(players.name, players.properties, players.options);
 
-ds.automigrate();
+// ds.automigrate();
+ds.autoupdate();

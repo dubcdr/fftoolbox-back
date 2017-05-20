@@ -12,45 +12,28 @@
   "properties": {
     "abbr": {
       "type": "string",
-      "required": true
+      "required": true,
+      "length": 4
     },
     "city": {
       "type": "string",
-      "required": true
+      "required": true,
+      "length": 20
     },
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "length": 20
     },
-    "qb1": {
-      "type": "number"
+    "conference": {
+      "type": "string",
+      "required": true,
+      "length": 3
     },
-    "qb2": {
-      "type": "number"
-    },
-    "wr1": {
-      "type": "number"
-    },
-    "wr2": {
-      "type": "number"
-    },
-    "wr3": {
-      "type": "number"
-    },
-    "rb1": {
-      "type": "number"
-    },
-    "rb2": {
-      "type": "number"
-    },
-    "rb3": {
-      "type": "number"
-    },
-    "te1": {
-      "type": "number"
-    },
-    "te2": {
-      "type": "number"
+    "division": {
+      "type": "string",
+      "required": true,
+      "length": 5
     }
   },
   "validations": [],

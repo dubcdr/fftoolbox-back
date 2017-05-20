@@ -1,0 +1,38 @@
+{
+  "name": "PlayerBio",
+  "plural": "n",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "player_id": {
+      "type": "number",
+      "required": true
+    },
+    "dob": {
+      "type": "date"
+    },
+    "height": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "number"
+    },
+    "college": {
+      "type": "string"
+    },
+    "twitter": {
+      "type": "string"
+    },
+    "draft_year": {
+      "type": "number",
+      "length": 4
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

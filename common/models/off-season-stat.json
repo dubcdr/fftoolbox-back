@@ -1,6 +1,6 @@
 {
   "name": "OffSeasonStat",
-  "base": "PersistedModel",
+  "base": "BaseStat",
   "idInjection": true,
   "options": {
     "postgresql": {
@@ -19,52 +19,16 @@
       "required": true
     },
     "gp": {
-      "type": "number"
+      "type": "number",
+      "required": true
     },
-    "ps_yd": {
-      "type": "number"
+    "fantasy_pts": {
+      "type": "number",
+      "required": true
     },
-    "ps_att": {
-      "type": "number"
-    },
-    "ps_cmp": {
-      "type": "number"
-    },
-    "ps_td": {
-      "type": "number"
-    },
-    "ru_att": {
-      "type": "number"
-    },
-    "ru_yd": {
-      "type": "number"
-    },
-    "ru_td": {
-      "type": "number"
-    },
-    "rec_tgs": {
-      "type": "number"
-    },
-    "rec": {
-      "type": "number"
-    },
-    "rec_yds": {
-      "type": "number"
-    },
-    "rec_td": {
-      "type": "number"
-    },
-    "2pt": {
-      "type": "number"
-    },
-    "ret_td": {
-      "type": "number"
-    },
-    "fum": {
-      "type": "number"
-    },
-    "int": {
-      "type": "number"
+    "vbd": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],

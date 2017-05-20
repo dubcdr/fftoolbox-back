@@ -30,6 +30,8 @@ function parsePlayer(json) {
   }
 }
 
+console.log('what the hell is going on?');
+
 osmosis
   .get('http://www.pro-football-reference.com/years/2016/passing.htm')
   .find('#passing > tbody > tr:not(.thead)')
@@ -38,19 +40,21 @@ osmosis
     'team': 'td[data-stat="team"] > a',
     'pos': 'td[data-stat="pos"]',
     'gp': 'td[data-stat="g"]',
-    'cmp': 'td[data-stat="pass_cmp"]',
-    'att': 'td[data-stat="pass_att"]',
-    'pass_yds': 'td[data-stat="pass_yds"]',
-    'pass_td': 'td[data-stat="pass_td"]',
-    "pass_int": 'td[data-stat="pass_int"]',
-    "pass_rating": 'td[data-stat="pass_rating"]',
-    "qbr": 'td[data-stat="qbr"]'
+    'ps_cmp': 'td[data-stat="pass_cmp"]',
+    'ps_att': 'td[data-stat="pass_att"]',
+    'ps_yd': 'td[data-stat="pass_yds"]',
+    'ps_td': 'td[data-stat="pass_td"]',
+    "int": 'td[data-stat="pass_int"]'
   })
   .data((response) => {
-    let player = parsePlayer(response);
-    if (player != null) {
-      app.models.Player.create(player, (response) => {
-        console.log('success?');
-      });
-    }
-  });
+    // let player = parsePlayer(response);
+    // if (player != null) {
+    //   app.models.Player.create(player, (insertResponse) => {
+    //     console.log(insertResponse);
+    //   });
+    // }
+    console.log(response);
+  })
+  .log(console.log)
+  .error(console.log)
+  .debug(console.log);

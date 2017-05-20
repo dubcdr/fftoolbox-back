@@ -1,6 +1,6 @@
 {
   "name": "OffWeekStat",
-  "base": "OffSeasonStat",
+  "base": "BaseStat",
   "idInjection": true,
   "options": {
     "postgresql": {
@@ -11,6 +11,10 @@
   },
   "properties": {
     "week": {
+      "type": "number",
+      "required": true
+    },
+    "year": {
       "type": "number",
       "required": true
     },

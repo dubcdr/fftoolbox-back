@@ -50,5 +50,13 @@
   "OffWeekStat": {
     "dataSource": "postgres",
     "public": true
+  },
+  "BaseStat": {
+    "dataSource": null,
+    "public": false
+  },
+  "PlayerBio": {
+    "dataSource": "postgres",
+    "public": true
   }
 }

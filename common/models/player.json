@@ -25,8 +25,14 @@
       "type": "string",
       "required": true
     },
-    "teamId": {
+    "team_id": {
+      "type": "number"
+    },
+    "pfr_id": {
       "type": "string"
+    },
+    "espn_id": {
+      "type": "number"
     }
   },
   "validations": [],
