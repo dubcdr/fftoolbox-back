@@ -18,8 +18,8 @@
       "type": "number",
       "required": true
     },
-    "opponentId": {
-      "type": "string",
+    "opp": {
+      "type": "number",
       "required": true
     }
   },

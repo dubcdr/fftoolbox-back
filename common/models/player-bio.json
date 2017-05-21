@@ -1,9 +1,12 @@
 {
   "name": "PlayerBio",
-  "plural": "n",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
+    "postgresql": {
+      "schema": "fftoolbox",
+      "table": "player_bio"
+    },
     "validateUpsert": true
   },
   "properties": {

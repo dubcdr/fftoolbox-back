@@ -36,7 +36,23 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "bio": {
+      "type": "hasOne",
+      "model": "PlayerBio",
+      "foreignKey": "player_id"
+    },
+    "season": {
+      "type": "hasMany",
+      "model": "OffSeasonStat",
+      "foreignKey": "player_id"
+    },
+    "week": {
+      "type": "hasMany",
+      "model": "OffWeekStat",
+      "foreignKey": "player_id"
+    }
+  },
   "acls": [],
   "methods": {}
 }

@@ -50,6 +50,9 @@
     },
     "int": {
       "type": "number"
+    },
+    "team_id": {
+      "type": "number"
     }
   },
   "validations": [],

@@ -10,7 +10,7 @@
     "validateUpsert": true
   },
   "properties": {
-    "playerId": {
+    "player_id": {
       "type": "number",
       "required": true
     },
