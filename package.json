@@ -23,8 +23,10 @@
     "strong-error-handler": "^2.0.0"
   },
   "devDependencies": {
+    "csv": "^1.1.1",
     "eslint": "^3.17.1",
     "eslint-config-loopback": "^8.0.0",
+    "fs": "0.0.1-security",
     "lodash": "^4.17.4",
     "nsp": "^2.1.0",
     "osmosis": "^1.1.4"

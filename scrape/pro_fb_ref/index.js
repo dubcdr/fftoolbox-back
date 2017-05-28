@@ -12,7 +12,9 @@ function pfrTeam2Abbr(str) {
   } else if (str === 'NOR') {
     return 'NO';
   } else if (str === 'SDG') {
-    return 'SD';
+    return 'LAR';
+  } else if (str === 'SD') {
+    return 'LAR';
   } else if (str === 'KAN') {
     return 'KC';
   } else if (str === 'GNB') {

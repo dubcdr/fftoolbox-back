@@ -1,7 +1,6 @@
 {
   "name": "NflTeam",
   "base": "PersistedModel",
-  "idInjection": true,
   "options": {
     "postgresql": {
       "schema": "fftoolbox",
@@ -10,6 +9,15 @@
     "validateUpsert": true
   },
   "properties": {
+    "id": {
+      "type": "number",
+      "id": true,
+      "required": true,
+      "postgresql": {
+        "columnName": "id",
+        "dataType": "smallint"
+      }
+    },
     "abbr": {
       "type": "string",
       "required": true,
@@ -25,12 +33,12 @@
       "required": true,
       "length": 20
     },
-    "conference": {
+    "conf": {
       "type": "string",
       "required": true,
       "length": 3
     },
-    "division": {
+    "div": {
       "type": "string",
       "required": true,
       "length": 5
