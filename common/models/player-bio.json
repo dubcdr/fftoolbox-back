@@ -32,6 +32,10 @@
     "draft_year": {
       "type": "number",
       "length": 4
+    },
+    "jersey_num": {
+      "type": "number",
+      "length": 2
     }
   },
   "validations": [],

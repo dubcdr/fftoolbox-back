@@ -7,7 +7,7 @@ var _ = require('lodash');
 
 var ScrapeUtility = require('./pro_fb_ref');
 
-let limit = 50; //limit number of players to scrape
+let limit = 300; //limit number of players to scrape
 let pfr_id;
 let teams;
 
@@ -25,12 +25,18 @@ function getTeams() {
 
 function getTeamId(str) {
   // console.log('team attempted', str);
-  return teams[ScrapeUtility.pfrTeam2Abbr(str)].id;
+  let team = teams[ScrapeUtility.pfrTeam2Abbr(str)];
+  if (team == null) {
+    return null;
+  } else {
+    return team.id;
+  }
 }
 
 function getPlayers() {
   osmosis.get('http://www.pro-football-reference.com/years/2016/fantasy.htm')
     .find(`#fantasy > tbody > tr:not(.thead):limit(${limit})`)
+    .delay(2500)
     .set({
       'name': 'td[csk] > @csk',
       'team': 'td[data-stat="team"] > a',
@@ -55,13 +61,14 @@ function getPlayers() {
     // .find(`td[csk]:limit(${limit}) > a`)
     .follow('td[csk] > a')
     .find('#meta')
+    .delay(2500)
     .set({
       'dob': 'span[itemprop="birthDate"] > @data-birth',
       'height': 'span[itemprop="height"]',
       'weight': 'span[itemprop="weight"]',
-      'college': 'div:nth-child(2) > p:nth-child(7) > a',
-      'twitter': 'div:nth-child(2) > p:nth-child(11) > a',
-      'draft_year': 'div:nth-child(2) > p:nth-child(10) > a:nth-child(3)'
+      'college': 'div:nth-child(2) > p > a[href^="/schools/"][href$="/"]',
+      'twitter': 'div:nth-child(2) > p > a[href*="twitter"]',
+      'draft_year': 'div:nth-child(2) > p > a[href^="/years/"][href$="draft.htm"]'
     })
     .data((response) => {
       createPlayer(response);
@@ -90,6 +97,7 @@ function createPlayer(json) {
     let playerId = parseInt(response.id);
     console.log('---');
     console.log('player_id: ', playerId);
+    console.log(`player name: ${response.first_name} ${response.last_name}`)
     console.log('---');
     createBio(json, playerId);
     createSeason(json, playerId);
@@ -98,21 +106,22 @@ function createPlayer(json) {
 }
 
 function parseBio(json, playerId) {
-  let weight = json.weight ? json.weight.substring(0, 3) : 0;
+  // console.log('parseBio json', json);
+  let weight = json.weight ? json.weight.substring(0, 3) : null;
   if (weight === 0) {
     console.log(`why so skinny | playerId: ${playerId}, name: ${json.name}`)
   }
-  let draft_year = json.draft_year ? json.draft_year.substring(0, 4) : 0;
+  let draft_year = json.draft_year ? json.draft_year.substring(0, 4) : null;
   if (draft_year === 0) {
     console.log(`why no draft year | playerId: ${playerId}, name: ${json.name}`)
   }
   let bio = {
     dob: json.dob,
     height: json.height,
-    weight: parseInt(json.weight.substring(0, 3)),
+    weight,
     college: json.college,
     twitter: json.twitter,
-    draft_year: parseInt(json.draft_year.substring(0, 4)),
+    draft_year,
     player_id: playerId
   }
   return bio;
