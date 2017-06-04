@@ -58,5 +58,13 @@
   "PlayerBio": {
     "dataSource": "postgres",
     "public": true
+  },
+  "ProjSeasStat": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Outlet": {
+    "dataSource": "postgres",
+    "public": true
   }
 }

@@ -33,6 +33,9 @@
     },
     "espn_id": {
       "type": "number"
+    },
+    "fftoday_id": {
+      "type": "number"
     }
   },
   "validations": [],

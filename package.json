@@ -29,7 +29,8 @@
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",
     "nsp": "^2.1.0",
-    "osmosis": "^1.1.4"
+    "osmosis": "^1.1.4",
+    "prompt": "^1.0.0"
   },
   "repository": {
     "type": "",
