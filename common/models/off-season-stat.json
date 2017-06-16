@@ -10,10 +10,6 @@
     "validateUpsert": true
   },
   "properties": {
-    "player_id": {
-      "type": "number",
-      "required": true
-    },
     "year": {
       "type": "number",
       "required": true

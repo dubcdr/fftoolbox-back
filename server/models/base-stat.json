@@ -39,7 +39,7 @@
     "rec_td": {
       "type": "number"
     },
-    "2pt": {
+    "two_pt": {
       "type": "number"
     },
     "ret_td": {
@@ -53,6 +53,10 @@
     },
     "team_id": {
       "type": "number"
+    },
+    "player_id": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],

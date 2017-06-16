@@ -21,9 +21,6 @@
     "opp_id": {
       "type": "number",
       "required": true
-    },
-    "player_id": {
-      "type": "number"
     }
   },
   "validations": [],

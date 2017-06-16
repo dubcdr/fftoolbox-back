@@ -1,7 +1,5 @@
-let prompt = require('prompt');
-var path = require('path');
-var app = require(path.resolve(__dirname, '../server/server'));
-var loopback = require('loopback');
+const prompt = require('prompt');
+
 
 class FftoolboxUtility {
   constructor() {
