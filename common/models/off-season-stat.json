@@ -16,7 +16,7 @@
     },
     "gp": {
       "type": "number",
-      "required": true
+      "required": false
     },
     "fantasy_pts": {
       "type": "number",

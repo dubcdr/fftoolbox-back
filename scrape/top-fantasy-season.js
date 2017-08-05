@@ -1,16 +1,15 @@
 // let osmosis = require('osmosis');
 var path = require('path');
 var app = require(path.resolve(__dirname, '../server/server'));
-var osmosis = require('osmosis');
-var loopback = require('loopback');
-var _ = require('lodash');
+const osmosis = require('osmosis');
+const loopback = require('loopback');
+const _ = require('lodash');
 
 var ScrapeUtility = require('./pro_fb_ref');
 
 let limit = 300; //limit number of players to scrape
 let pfr_id;
 let teams;
-
 
 getTeams();
 
@@ -70,8 +69,13 @@ function getPlayers() {
       'twitter': 'div:nth-child(2) > p > a[href*="twitter"]',
       'draft_year': 'div:nth-child(2) > p > a[href^="/years/"][href$="draft.htm"]'
     })
+    .find('#rushing_and_receiving')
+    .set({
+      'fum': 'tr:last-of-type td[data-stat="fumbles"]'
+    })
     .data((response) => {
-      createPlayer(response);
+      console.log('found fumbles', response.fum);
+      updatePlayer(response);
       /*chain the rest after promises*/
     })
     .log(console.log)
@@ -104,6 +108,39 @@ function createPlayer(json) {
     getWeeks(json.pfr_id, playerId);
   });
 }
+
+
+function updatePlayer(json) {
+  let player = parsePlayer(json);
+  // console.log(`first: ${player.first_name}, last: ${player.last_name}`)
+  let where = {
+    "where": {
+      "first_name": player.first_name,
+      "last_name": player.last_name
+    }
+  };
+  // console.log('where', where);
+  app.models.Player.find(where, (err, models) => {
+    models.forEach((model) => {
+      updateSeason(json, model.id);
+    })
+  })
+}
+
+function updateSeason(json, player_id) {
+  // console.log(`update season for player_id: ${player_id}, json`)
+  let newSeason = parseSeason(json, player_id);
+  // console.log('new season', newSeason);
+  let where = {
+    "player_id": player_id,
+    "year": 2016
+  }
+  app.models.OffSeasonStat.upsertWithWhere(where, newSeason, (err, obj) => {
+    // console.log('update successful?')
+    // console.log(obj);
+  });
+}
+
 
 function parseBio(json, playerId) {
   // console.log('parseBio json', json);
@@ -158,7 +195,8 @@ function parseBasicStats(json) {
     rec: parseStatToInt(json.rec),
     rec_yd: parseStatToInt(json.rec_yd),
     rec_td: parseStatToInt(json.rec_td),
-    team_id: getTeamId(json.team)
+    team_id: getTeamId(json.team),
+    fum: parseStatToInt(json.fum)
   };
 }
 
