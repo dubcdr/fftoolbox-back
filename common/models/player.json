@@ -54,6 +54,11 @@
       "type": "hasMany",
       "model": "OffWeekStat",
       "foreignKey": "player_id"
+    },
+    "projSeasStats": {
+      "type": "hasMany",
+      "model": "ProjSeasStat",
+      "foreignKey": "player_id"
     }
   },
   "acls": [],
