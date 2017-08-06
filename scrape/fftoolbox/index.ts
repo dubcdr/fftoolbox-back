@@ -135,6 +135,15 @@ export namespace Fftoolbox {
       })
     }
 
+    public projSeasonFindOrCreate(filter: any, model: IProjOffSeasStat): Promise<IProjOffSeasStat> {
+      return new Promise((resolve, reject) => {
+        this.lb.models.ProjSeasStat.findOrCreate(filter, model, (err, response: IProjOffSeasStat, created: boolean) => {
+          if (err) reject(err);
+          resolve(response);
+        })
+      })
+    }
+
     public findPlayerIdByFirstLast(first_name, last_name): Promise<number> {
       return new Promise((resolve, reject) => {
         this.lb.models.Player.find({
