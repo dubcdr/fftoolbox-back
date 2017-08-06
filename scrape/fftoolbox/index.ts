@@ -1,16 +1,27 @@
 // const prompt = require('prompt');
 // const path = require('path');
 // const app = require(path.resolve(__dirname, '../server/server'));
-// const loopback = require('loopback');
 
 import prompt from 'prompt';
-import loopback = require('./../../server/server');
+
+import * as _ from 'lodash';
+
+const app = require('./../../server/server');
 
 export namespace Fftoolbox {
   export enum EOutlets {
     pff = 1,
-    espn,
-    fftoday
+    fftoday,
+    espn
+  }
+
+  export interface INflTeam {
+    id?: number,
+    abbr: string,
+    city: string,
+    name: string,
+    conf: string,
+    div: string
   }
 
   export interface IBaseStat {
@@ -29,69 +40,126 @@ export namespace Fftoolbox {
     ret_td?: number;
     fum?: number;
     int?: number;
-    team_id?: number;
-    player_id: number;
+    teamId?: number;
+    playerId: number;
+    outletId: number;
   }
 
-  export interface IProjSeasStat extends IBaseStat {
-    year: number;
-    player_id: number;
-    fantasy_pts?: number;
-    outlet_id: number;
-    date: Date;
+  export interface IPlayer {
+    first_name: string,
+    last_name: string,
+    suffix?: string,
+    position: 'QB' | 'WR' | 'TE' | 'RB',
+    teamId?: number,
+    pfrId?: number,
+    espnId?: number,
+    fftodayId?: number,
+    id?: number
   }
 
-  export class Loopback {
-    public static app: any = loopback;
+  export interface IProjOffSeasStat extends IBaseStat {
+    year: number,
+    fantasy_pts?: number,
+    outletId: number,
+    date: Date
+  }
+
+  export class Utilities {
+    public static parseStatToInt(str) {
+      if (str == null) {
+        return 0;
+      } else {
+        let parsed = parseInt(str);
+        if (isNaN(parsed)) {
+          return 0;
+        } else {
+          return parsed;
+        }
+      }
+    }
+  }
+
+  export abstract class Loopback {
+    public lb: any = app;
+    public nflTeams: any;
+
     constructor() {
+      this.initNflTeams().then((response) => {
+        this.nflTeams = response;
+      });
     }
 
-    public findPlayerIdByFirstLast(first_name, last_name) {
+    public initNflTeams(): Promise<any> {
+      if (this.nflTeams == null) {
+        this.nflTeams = new Array<INflTeam>();
+      }
       return new Promise((resolve, reject) => {
-        Loopback.app.models.Player.find({
+        this.lb.models.NflTeam.find().then((response) => {
+          resolve(_.keyBy(response, 'abbr'))
+        }, (err) => {
+          reject(err);
+        });
+      });
+    }
+
+    public playerUpsertWithWhere(where: any, model: IPlayer): Promise<IPlayer> {
+      return new Promise((resolve, reject) => {
+        this.lb.models.Player.upsertWithWhere(where, model, (err, model) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(model);
+          }
+        })
+      })
+    }
+
+    public getAllPlayers(filter = {}): Promise<Array<IPlayer>> {
+      return new Promise((resolve, reject) => {
+        this.lb.models.Player.find(filter, (err, responses) => {
+          if (err) reject(err);
+          resolve(responses);
+        });
+      });
+    }
+
+    public projSeasonUpsertWithWhere(where: any, model: IProjOffSeasStat): Promise<IProjOffSeasStat> {
+      return new Promise((resolve, reject) => {
+        this.lb.models.ProjSeasStat.upsertWithWhere(where, model, (err, model) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(model);
+          }
+        })
+      })
+    }
+
+    public findPlayerIdByFirstLast(first_name, last_name): Promise<number> {
+      return new Promise((resolve, reject) => {
+        this.lb.models.Player.find({
           where: {
             first_name,
             last_name
           }
-        }).then((response) => {
-          if (response.length === 0) {
-            console.log(`There were no results for ${first_name} ${last_name}`);
-            console.log(`Enter 'quit' to exit or the id to continue`);
-            prompt.start();
-            prompt.get(['id'], (err, result) => {
-              Loopback.app.models.Player.find({
-                where: {
-                  id: result.id
-                }
-              }).then((response) => {
-                if (response.length === 1) {
-                  resolve(result.id);
-                } else {
-                  process.exit(1);
-                }
-              })
-            })
-          } else if (response.length > 1) {
-            console.log(`Multiple results were returned for ${first_name} ${last_name}`);
+        }).then((response: Array<IPlayer>) => {
+          if (response.length > 1) {
+            console.error(`Multiple Entries Found for ${first_name} ${last_name}`);
+            // reject(response);
             console.log(response);
-            console.log('Enter the zero based index of desired or -1 to exit');
-            prompt.start();
-            prompt.get(['index'], (err, result) => {
-              if (parseInt(result.index) === -1) {
-                process.exit(1);
-              } else {
-                resolve(response[parseInt(result.index)].id);
-              }
-            })
+            resolve(0);
+          } else if (response.length === 0) {
+            console.log(`No Entry Found for ${first_name} ${last_name}`)
+            resolve(0);
           } else {
-            console.log(response[0]);
             resolve(response[0].id);
           }
         }, (error) => {
-          console.log(error);
+          reject(error);
         });
       })
     }
+
   }
 }
 

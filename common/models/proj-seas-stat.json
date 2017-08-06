@@ -17,7 +17,7 @@
     "fantasy_pts": {
       "type": "number"
     },
-    "outlet_id": {
+    "outletId": {
       "type": "number",
       "required": true
     },

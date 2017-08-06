@@ -51,10 +51,14 @@
     "int": {
       "type": "number"
     },
-    "team_id": {
+    "teamId": {
       "type": "number"
     },
-    "player_id": {
+    "playerId": {
+      "type": "number",
+      "required": true
+    },
+    "outletId": {
       "type": "number",
       "required": true
     }

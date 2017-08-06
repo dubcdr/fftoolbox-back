@@ -7,12 +7,11 @@ const _ = require('lodash');
 
 var ScrapeUtility = require('./pro_fb_ref');
 
-let limit = 300; //limit number of players to scrape
-let pfr_id;
+let limit = 5; //limit number of players to scrape
+let pfrId;
 let teams;
 
 getTeams();
-
 
 function getTeams() {
   app.models.NflTeam.find().then((response) => {
@@ -34,7 +33,7 @@ function getTeamId(str) {
 
 function getPlayers() {
   osmosis.get('http://www.pro-football-reference.com/years/2016/fantasy.htm')
-    .find(`#fantasy > tbody > tr:not(.thead):limit(${limit})`)
+    .find(`#fantasy > tbody > tr:not(.thead):range(11,300)`)
     .delay(2500)
     .set({
       'name': 'td[csk] > @csk',
@@ -55,7 +54,7 @@ function getPlayers() {
       "rec_td": 'td[data-stat="rec_td"]',
       "fantasy_pts": 'td[data-stat="fantasy_points"]',
       "vbd": 'td[data-stat="vbd"]',
-      "pfr_id": 'td[data-append-csv] > @data-append-csv',
+      "pfrId": 'td[data-append-csv] > @data-append-csv',
     })
     // .find(`td[csk]:limit(${limit}) > a`)
     .follow('td[csk] > a')
@@ -69,18 +68,23 @@ function getPlayers() {
       'twitter': 'div:nth-child(2) > p > a[href*="twitter"]',
       'draft_year': 'div:nth-child(2) > p > a[href^="/years/"][href$="draft.htm"]'
     })
-    .find('#rushing_and_receiving')
-    .set({
-      'fum': 'tr:last-of-type td[data-stat="fumbles"]'
-    })
+    // .find('#rushing_and_receiving')
+    // .set({
+    //   'fum': 'tr:last-of-type td[data-stat="fumbles"]'
+    // })
     .data((response) => {
-      console.log('found fumbles', response.fum);
+      // console.log('found fumbles', response.fum);
+      console.log('---')
+      console.log('---');
+      console.log(`start of ${response.name}`);
+      console.log('---')
+      console.log('---')
       updatePlayer(response);
       /*chain the rest after promises*/
     })
-    .log(console.log)
+    // .log(console.log)
     .error(console.log)
-    .debug(console.log);
+  // .debug(console.log);
 }
 
 
@@ -90,8 +94,8 @@ function parsePlayer(json) {
   player.first_name = name.first;
   player.last_name = name.last;
   player.position = json.pos;
-  player.pfr_id = json.pfr_id;
-  player.team_id = getTeamId(json.team);
+  player.pfrId = json.pfrId;
+  player.teamId = getTeamId(json.team);
 
   return player;
 }
@@ -100,12 +104,12 @@ function createPlayer(json) {
   app.models.Player.create(parsePlayer(json)).then((response) => {
     let playerId = parseInt(response.id);
     console.log('---');
-    console.log('player_id: ', playerId);
+    console.log('playerId: ', playerId);
     console.log(`player name: ${response.first_name} ${response.last_name}`)
     console.log('---');
     createBio(json, playerId);
     createSeason(json, playerId);
-    getWeeks(json.pfr_id, playerId);
+    getWeeks(json.pfrId, playerId);
   });
 }
 
@@ -114,30 +118,34 @@ function updatePlayer(json) {
   let player = parsePlayer(json);
   // console.log(`first: ${player.first_name}, last: ${player.last_name}`)
   let where = {
-    "where": {
-      "first_name": player.first_name,
-      "last_name": player.last_name
-    }
+    "first_name": player.first_name,
+    "last_name": player.last_name
   };
   // console.log('where', where);
-  app.models.Player.find(where, (err, models) => {
-    models.forEach((model) => {
-      updateSeason(json, model.id);
-    })
-  })
+  app.models.Player.upsertWithWhere(where, player, (err, model) => {
+    // console.log('---');
+    // console.log('playerId: ', model.id);
+    // console.log(`player name: ${model.first_name} ${model.last_name}`)
+    // console.log('---');
+    updateSeason(json, model.id);
+    updateBio(json, model.id);
+    getWeeks(json.pfrId, model.id);
+  });
 }
 
-function updateSeason(json, player_id) {
-  // console.log(`update season for player_id: ${player_id}, json`)
-  let newSeason = parseSeason(json, player_id);
+function updateSeason(json, playerId) {
+  // console.log(`update season for playerId: ${playerId}, json`)
+  let newSeason = parseSeason(json, playerId);
   // console.log('new season', newSeason);
   let where = {
-    "player_id": player_id,
+    "playerId": playerId,
     "year": 2016
   }
   app.models.OffSeasonStat.upsertWithWhere(where, newSeason, (err, obj) => {
-    // console.log('update successful?')
-    // console.log(obj);
+    if (err) {
+      cosnole.log('error in update season');
+      console.log(err);
+    }
   });
 }
 
@@ -159,13 +167,19 @@ function parseBio(json, playerId) {
     college: json.college,
     twitter: json.twitter,
     draft_year,
-    player_id: playerId
+    playerId: playerId
   }
   return bio;
 }
 
-function createBio(json, playerId) {
-  app.models.PlayerBio.create(parseBio(json, playerId)).then((response) => {})
+function updateBio(json, playerId) {
+  app.models.PlayerBio.upsertWithWhere({
+    playerId
+  }, parseBio(json, playerId), (err, obj) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 }
 
 function parseStatToInt(str) {
@@ -195,7 +209,7 @@ function parseBasicStats(json) {
     rec: parseStatToInt(json.rec),
     rec_yd: parseStatToInt(json.rec_yd),
     rec_td: parseStatToInt(json.rec_td),
-    team_id: getTeamId(json.team),
+    teamId: getTeamId(json.team),
     fum: parseStatToInt(json.fum)
   };
 }
@@ -205,10 +219,11 @@ function parseSeason(json, playerId) {
   // console.log('json', json);
   // console.log('playerId', playerId);
   let season = {
+    outletId: 1,
     gp: parseStatToInt(json.gp),
     fantasy_pts: parseInt(json.fantasy_pts),
     vbd: parseStatToInt(json.vbd),
-    player_id: playerId,
+    playerId: playerId,
     year: 2016 //notice this is not dynamic
   }
   _.assign(season, parseBasicStats(json))
@@ -222,15 +237,15 @@ function createSeason(json, playerId) {
   })
 }
 
-function getWeeks(pfr_id, playerId) {
-  osmosis.get(`http://www.pro-football-reference.com/players/${pfr_id.charAt(0)}/${pfr_id}/gamelog/`)
+function getWeeks(pfrId, playerId) {
+  osmosis.get(`http://www.pro-football-reference.com/players/${pfrId.charAt(0)}/${pfrId}/gamelog/`)
     .find('#div_stats tbody tr:not(.thead)')
     .set({
       'year': 'td[data-stat="year_id"]',
       'date': 'td[data-stat="game_date"]',
       'week': 'td[data-stat="game_num"]',
       'team': 'td[data-stat="team"]',
-      'opp_id': 'td[data-stat="opp"]',
+      'oppId': 'td[data-stat="opp"]',
       'ps_cmp': 'td[data-stat="pass_cmp"]',
       'ps_att': 'td[data-stat="pass_att"]',
       'ps_yd': 'td[data-stat="pass_yds"]',
@@ -247,31 +262,40 @@ function getWeeks(pfr_id, playerId) {
       "2pt": 'td[data-stat="two_pt_md"]'
     })
     .data((response) => {
-      console.log(`start of week create | playerId: ${playerId}, year: ${response.year}, week: ${response.week}`);
-      createWeek(response, playerId);
+      // console.log(`start of week create | playerId: ${playerId}, year: ${response.year}, week: ${response.week}`);
+      updateWeek(response, playerId);
       // console.log('end of create week');
     })
-    .log(console.log)
-    .error(console.log)
-    .debug(console.log);
+  // .log(console.log)
+  // .error(console.log)
+  // .debug(console.log);
 }
 
 function parseWeek(json, playerId) {
   let week = {
-    player_id: playerId,
+    playerId: playerId,
     year: parseInt(json.year),
     date: ScrapeUtility.convert2Date(json.date),
     week: parseInt(json.week),
     team: getTeamId(json.team),
-    opp_id: getTeamId(json.opp_id)
+    oppId: getTeamId(json.oppId),
+    outletId: 1
   }
   _.assign(week, parseBasicStats(json));
   // console.log('parse week result', week);
   return week;
 }
 
-function createWeek(json, playerId) {
-  app.models.OffWeekStat.create(parseWeek(json, playerId)).then((response) => {
-    // console.log('api response', response);
-  });;
+function updateWeek(json, playerId) {
+  app.models.OffWeekStat.upsertWithWhere({
+    playerId,
+    year: json.year,
+    week: json.week
+  }, parseWeek(json, playerId), (err, obj) => {
+    if (err) {
+      console.log(`failure in update week playerId: ${playerId}`);
+      console.log('json', json);
+      console.log(err);
+    }
+  })
 }

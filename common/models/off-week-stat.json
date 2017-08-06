@@ -18,7 +18,7 @@
       "type": "number",
       "required": true
     },
-    "opp_id": {
+    "oppId": {
       "type": "number",
       "required": true
     }

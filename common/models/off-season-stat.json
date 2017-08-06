@@ -31,7 +31,7 @@
     "player": {
       "type": "belongsTo",
       "model": "Player",
-      "foreignKey": "player_id"
+      "foreignKey": ""
     }
   },
   "acls": [],

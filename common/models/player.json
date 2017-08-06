@@ -25,16 +25,16 @@
       "type": "string",
       "required": true
     },
-    "team_id": {
+    "teamId": {
       "type": "number"
     },
-    "pfr_id": {
+    "pfrId": {
       "type": "string"
     },
-    "espn_id": {
+    "espnId": {
       "type": "number"
     },
-    "fftoday_id": {
+    "fftodayId": {
       "type": "number"
     }
   },
@@ -43,22 +43,22 @@
     "bio": {
       "type": "hasOne",
       "model": "PlayerBio",
-      "foreignKey": "player_id"
+      "foreignKey": ""
     },
     "season": {
       "type": "hasMany",
       "model": "OffSeasonStat",
-      "foreignKey": "player_id"
+      "foreignKey": ""
     },
     "week": {
       "type": "hasMany",
       "model": "OffWeekStat",
-      "foreignKey": "player_id"
+      "foreignKey": ""
     },
     "projSeasStats": {
       "type": "hasMany",
       "model": "ProjSeasStat",
-      "foreignKey": "player_id"
+      "foreignKey": ""
     }
   },
   "acls": [],

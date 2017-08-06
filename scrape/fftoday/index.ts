@@ -1,22 +1,20 @@
-import * as prompt from 'prompt';
+import { Fftoolbox } from './../fftoolbox';
 
-import loopback = require('loopback');
-
-export class FftodayTools {
+export class FftodayTools extends Fftoolbox.Loopback {
   public static baseUrl = 'http://www.fftoday.com/';
-  public static app: any = loopback();
   public static outletId = 3;
 
   constructor() {
+    super();
   }
 
-  public static appendIdsToPlayerModel(first_name: string, last_name: string, fftoday_id: number) {
+  public appendIdsToPlayerModel(first_name: string, last_name: string, fftodayId: number) {
     return new Promise<any>((resolve, reject) => {
-      FftodayTools.app.models.Player.upsertWithWhere({
+      this.lb.models.Player.upsertWithWhere({
         first_name,
         last_name
       }, {
-          fftoday_id
+          fftodayId
         }, (err, object) => {
           if (err) {
             reject(err);
