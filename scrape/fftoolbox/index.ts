@@ -5,6 +5,8 @@
 import prompt from 'prompt';
 
 import * as _ from 'lodash';
+import * as moment from 'moment';
+import * as chalk from 'chalk';
 
 const app = require('./../../server/server');
 
@@ -135,13 +137,32 @@ export namespace Fftoolbox {
       })
     }
 
-    public projSeasonFindOrCreate(filter: any, model: IProjOffSeasStat): Promise<IProjOffSeasStat> {
+    public projSeasonFindOrCreate(model: IProjOffSeasStat): Promise<IProjOffSeasStat> {
+      console.info(chalk.blue('Start of projSeasonFindOrCreate'));
+      let filter = {
+        where: {
+          year: model.year,
+          outletId: model.outletId,
+          playerId: model.playerId,
+          date: {
+            gt: moment(model.date).subtract(2, 'd').toDate(),
+            lt: moment(model.date).add(2, 'd').toDate()
+          }
+        }
+      }
+      console.info(chalk.cyan('filter'), filter);
       return new Promise((resolve, reject) => {
         this.lb.models.ProjSeasStat.findOrCreate(filter, model, (err, response: IProjOffSeasStat, created: boolean) => {
-          if (err) reject(err);
-          resolve(response);
+          if (err) {
+            console.error(chalk.bgRed('error in projSeasonFindOrCreate'), err);
+            reject(err);
+          } else {
+            console.log(chalk.dim('created?: '), created);
+            console.info(chalk.blue('End of projSeasonFindOrCreate'));
+            resolve(response);
+          }
         })
-      })
+      });
     }
 
     public findPlayerIdByFirstLast(first_name, last_name): Promise<number> {

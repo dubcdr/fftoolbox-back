@@ -1,7 +1,8 @@
 import osmosis = require('osmosis');
-import { FftodayTools } from './';
+import { FftodayTools, IScrapeFFtodayResponse } from './';
 import { Fftoolbox } from './../fftoolbox';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 const app = require('./../../server/server');
 
@@ -12,10 +13,6 @@ export class FftodayQbScrape extends FftodayTools {
 
   constructor() {
     super();
-  }
-
-  public async testApp() {
-    this.scrapeQbs()
   }
 
   public scrapeQbs() {
@@ -50,74 +47,29 @@ export class FftodayQbScrape extends FftodayTools {
 
   public async parseQbData(obj: IScrapeQbResponse): Promise<Fftoolbox.IProjOffSeasStat> {
     let name = FftodayTools.parseName(obj.name);
-    let fftodayId = FftodayTools.getFftodayIdFromLink(obj.name_link);
 
-    let playerId = await this.findPlayerIdByFirstLast(name.first, name.last);
-    let projDate = FftodayTools.parseDate(obj.dateString);
+    let projData = await this.initProjOffSeasStat(obj, 'QB')
 
-    if (!(playerId > 0)) {
-      console.log('need to make player for', obj);
-      let player: Fftoolbox.IPlayer = {
-        first_name: name.first,
-        last_name: name.last,
-        position: 'QB',
-        teamId: this.nflTeams[obj.team].id,
-        fftodayId: fftodayId,
-      }
-      let where = {
-        first_name: name.first,
-        last_name: name.last
-      }
-      player = await this.playerUpsertWithWhere(where, player);
-      console.log('Player Inserted', player);
-      if (player && player.id) {
-        playerId = player.id;
-      };
-    }
+    await this.appendIdsToPlayerModel(name.first, name.last, projData.outletId);
 
-    await this.appendIdsToPlayerModel(name.first, name.last, fftodayId);
-
-    let data: Fftoolbox.IProjOffSeasStat = {
-      date: projDate.toDate(),
-      year: 2017,
-      outletId: Fftoolbox.EOutlets.fftoday,
-      fantasy_pts: Fftoolbox.Utilities.parseStatToInt(obj.fantasy_pts),
+    let data: Fftoolbox.IProjOffSeasStat = _.extend(projData, {
       ps_att: Fftoolbox.Utilities.parseStatToInt(obj.ps_att),
       ps_cmp: Fftoolbox.Utilities.parseStatToInt(obj.ps_cmp),
       ps_td: Fftoolbox.Utilities.parseStatToInt(obj.ps_td),
       ps_yd: Fftoolbox.Utilities.parseStatToInt(obj.ps_yd),
       int: Fftoolbox.Utilities.parseStatToInt(obj.int),
-      playerId,
       ru_att: Fftoolbox.Utilities.parseStatToInt(obj.ru_att),
       ru_td: Fftoolbox.Utilities.parseStatToInt(obj.ru_td),
       ru_yd: Fftoolbox.Utilities.parseStatToInt(obj.ru_yd),
-      teamId: this.getTeam(obj.team)
-    }
+    });
 
-    let filter = {
-      where: {
-        year: data.year,
-        outletId: data.outletId,
-        playerId,
-        date: {
-          gt: projDate.subtract(2, 'd').toDate(),
-          lt: projDate.add(2, 'd').toDate()
-        }
-      }
-    }
+    let projSeason = await this.projSeasonFindOrCreate(data);
 
-    let projSeason = await this.projSeasonFindOrCreate(filter, data);
-
-    return data;
+    return projSeason;
   }
 }
 
-interface IScrapeQbResponse {
-  dateString: string;
-  name: string;
-  name_link: string;
-  team: string;
-  bye: string;
+interface IScrapeQbResponse extends IScrapeFFtodayResponse {
   ps_cmp: string;
   ps_att: string;
   ps_yd: string;
@@ -126,8 +78,7 @@ interface IScrapeQbResponse {
   ru_att: string;
   ru_yd: string;
   ru_td: string;
-  fantasy_pts: string;
 }
 
 let test = new FftodayQbScrape();
-test.testApp();
+test.scrapeQbs();
