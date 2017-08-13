@@ -1,6 +1,7 @@
 import { Fftoolbox } from './../fftoolbox';
 import * as chalk from 'chalk';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 export class FftodayTools extends Fftoolbox.Loopback {
   public static baseUrl = 'http://www.fftoday.com/';
@@ -33,47 +34,50 @@ export class FftodayTools extends Fftoolbox.Loopback {
   public async initProjOffSeasStat(scrapeData: IScrapeFFtodayResponse, pos: 'QB' | 'WR' | 'TE' | 'RB'): Promise<Fftoolbox.IProjOffSeasStat> {
     console.log(chalk.blue('Starting initProjOffSeasStat'))
     let name = FftodayTools.parseName(scrapeData.name);
-    console.log(chalk.dim(`${name.first} ${name.last}`));
-    let fftodayId = FftodayTools.getFftodayIdFromLink(scrapeData.name_link);
+    if (name) {
+      console.log(chalk.dim(`${name.first} ${name.last}`));
+      let fftodayId = FftodayTools.getFftodayIdFromLink(scrapeData.name_link);
 
-    let playerId = await this.findPlayerIdByFirstLast(name.first, name.last);
-    if (playerId > 0) {
-      console.log(chalk.dim(`playerdId: ${playerId}`));
-    }
-    let projDate = FftodayTools.parseDate(scrapeData.dateString);
-
-    if (!(playerId > 0)) {
-      console.log(chalk.bgRed(`Player ${name.first} ${name.last} not found. Creating...`));
-      console.log('need to make player for', scrapeData);
-      let player: Fftoolbox.IPlayer = {
-        first_name: name.first,
-        last_name: name.last,
-        position: pos,
-        teamId: this.nflTeams[scrapeData.team].id,
-        fftodayId: fftodayId,
+      let playerId = await this.findPlayerIdByFirstLast(name.first, name.last);
+      if (playerId > 0) {
+        console.log(chalk.dim(`playerdId: ${playerId}`));
       }
-      let where = {
-        first_name: name.first,
-        last_name: name.last
+      let projDate = FftodayTools.parseDate(scrapeData.dateString);
+
+      // if player has not been previously created
+      // if (!(playerId > 0)) {
+      if (true) {
+        console.log(chalk.bgRed(`Player ${name.first} ${name.last} not found. Creating...`));
+        // console.log('need to make player for', scrapeData);
+        let player: Fftoolbox.IPlayer = {
+          first_name: name.first,
+          last_name: name.last,
+          position: pos,
+          teamId: this.nflTeams[scrapeData.team].id,
+          fftodayId: fftodayId,
+        }
+        player = await this.playerUpsertWithWhere(player);
+        console.log(chalk.bgGreen('Player Inserted'), player);
+        if (player && player.id) {
+          playerId = player.id;
+        };
       }
-      player = await this.playerUpsertWithWhere(where, player);
-      console.log(chalk.bgGreen('Player Inserted'), player);
-      if (player && player.id) {
-        playerId = player.id;
-      };
-    }
 
-    let data: Fftoolbox.IProjOffSeasStat = {
-      date: projDate.toDate(),
-      year: projDate.toDate().getFullYear(),
-      outletId: Fftoolbox.EOutlets.fftoday,
-      fantasy_pts: Fftoolbox.Utilities.parseStatToInt(scrapeData.fantasy_pts),
-      playerId,
-      teamId: this.getTeam(scrapeData.team).id
-    }
-    console.log(chalk.blue('End initProjOffSeasStat with result:'), data);
+      let data: Fftoolbox.IProjOffSeasStat = {
+        date: projDate.toDate(),
+        year: projDate.toDate().getFullYear(),
+        outletId: Fftoolbox.EOutlets.fftoday,
+        fantasy_pts: Fftoolbox.Utilities.parseStatToInt(scrapeData.fantasy_pts),
+        playerId,
+        teamId: this.getTeam(scrapeData.team).id
+      }
+      // console.log(chalk.blue('End initProjOffSeasStat with result:'), data);
 
-    return data;
+      return data;
+    }
+    else {
+      throw Error(`Cant parse name for ${scrapeData.name}`);
+    }
   }
 
   public appendIdsToPlayerModel(first_name: string, last_name: string, fftodayId: number): Promise<Fftoolbox.IPlayer> {
@@ -88,21 +92,30 @@ export class FftodayTools extends Fftoolbox.Loopback {
           if (err) {
             reject(err);
           } else {
-            console.log(chalk.dim('added, player object:', object));
+            // console.log(chalk.dim('added, player object:'), object);
             resolve(object);
           }
         })
     });
   }
 
-  public static parseName(str: string): { first: string, last: string } {
-    let index = str.indexOf(' ');
-    let first = str.substring(0, index);
-    let last = str.substring(index + 1, str.length)
-    return {
-      first,
-      last
-    };
+  public static parseName(str: string): { first: string, last: string, suffix?: string } | null {
+    console.log(`begin parse name for ${str}`);
+    const regEx = /([\w-.]+)\s([\w-.]+)(?:\s)?([\w.]+)?/g
+    let matches = regEx.exec(str);
+    console.log('matches', matches);
+    if (matches) {
+      let name = {
+        first: matches[1],
+        last: matches[2]
+      };
+      if (typeof matches[3] === 'string') {
+        name = _.extend(name, { suffix: matches[3] })
+      };
+      return name;
+    } else {
+      return null;
+    }
   }
 
   public getTeam(short: string) {

@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = function(Projseasstat) {
+module.exports = function (Projseasstat) {
 
 };

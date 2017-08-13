@@ -17,6 +17,15 @@ export namespace Fftoolbox {
     espn
   }
 
+  export enum EPosition {
+    QB,
+    WR,
+    RB,
+    TE,
+    K,
+    DEF
+  }
+
   export interface INflTeam {
     id?: number,
     abbr: string,
@@ -104,7 +113,11 @@ export namespace Fftoolbox {
       });
     }
 
-    public playerUpsertWithWhere(where: any, model: IPlayer): Promise<IPlayer> {
+    public playerUpsertWithWhere(model: IPlayer): Promise<IPlayer> {
+      let where = {
+        first_name: model.first_name,
+        last_name: model.last_name
+      }
       return new Promise((resolve, reject) => {
         this.lb.models.Player.upsertWithWhere(where, model, (err, model) => {
           if (err) {
@@ -150,7 +163,7 @@ export namespace Fftoolbox {
           }
         }
       }
-      console.info(chalk.cyan('filter'), filter);
+      // console.info(chalk.cyan('filter'), filter);
       return new Promise((resolve, reject) => {
         this.lb.models.ProjSeasStat.findOrCreate(filter, model, (err, response: IProjOffSeasStat, created: boolean) => {
           if (err) {

@@ -61,6 +61,12 @@
     "outletId": {
       "type": "number",
       "required": true
+    },
+    "createdOn": {
+      "type": "date"
+    },
+    "modifiedOn": {
+      "type": "date"
     }
   },
   "validations": [],

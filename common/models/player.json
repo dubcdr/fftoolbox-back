@@ -36,6 +36,12 @@
     },
     "fftodayId": {
       "type": "number"
+    },
+    "createdOn": {
+      "type": "date"
+    },
+    "modifiedOn": {
+      "type": "date"
     }
   },
   "validations": [],

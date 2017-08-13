@@ -8,7 +8,7 @@ import * as chalk from 'chalk';
 const app = require('./../../server/server');
 
 export class FftodayWrScrape extends FftodayTools {
-  public limit = 1;
+  public limit = Number.MAX_SAFE_INTEGER;
   public year = 2017;
   public projSeasStatUrl = `http://www.fftoday.com/rankings/playerproj.php?Season=${this.year}&PosID=30&LeagueID=17`;
   public osmosis = osmosis(this.projSeasStatUrl);
@@ -19,6 +19,8 @@ export class FftodayWrScrape extends FftodayTools {
 
   public scrapeWrs() {
     this.osmosis.get(this.projSeasStatUrl)
+      .paginate('div[align="center"] > a:contains("Next Page")', 3)
+      .delay(2500)
       .find('body')
       .set({
         'dateString': '.update'
@@ -38,6 +40,7 @@ export class FftodayWrScrape extends FftodayTools {
         'fantasy_pts': 'td:nth-child(11)'
       })
       .data((response: IScrapeWrResponse) => {
+        // console.log(response.name);
         this.parseWrData(response);
       })
   }
@@ -47,8 +50,6 @@ export class FftodayWrScrape extends FftodayTools {
     let name = FftodayTools.parseName(obj.name);
 
     let projData = await this.initProjOffSeasStat(obj, 'WR');
-
-    await this.appendIdsToPlayerModel(name.first, name.last, projData.outletId);
 
     const parseStrToStat = Fftoolbox.Utilities.parseStatToInt;
 
@@ -61,11 +62,11 @@ export class FftodayWrScrape extends FftodayTools {
       ru_td: parseStrToStat(obj.ru_td)
     });
 
-    console.log(chalk.cyan('result of initProjOffSeasStat and extend'), data);
+    // console.log(chalk.cyan('result of initProjOffSeasStat and extend'), data);
 
     let projSeason = await this.projSeasonFindOrCreate(data);
 
-    console.log(chalk.cyan('result from create in backend'), projSeason);
+    // console.log(chalk.cyan('result from create in backend'), projSeason);
 
     console.log(chalk.blue('End of parseWrData'));
     return projSeason;
