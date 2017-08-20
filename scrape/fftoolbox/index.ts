@@ -158,7 +158,6 @@ export namespace Fftoolbox {
       public loopback = new Fftoolbox.Loopback();
 
       constructor() {
-
       }
 
       public parseName(str: string): { first: string, last: string, suffix?: string } | null {
@@ -179,12 +178,13 @@ export namespace Fftoolbox {
       }
 
       public parseOutletPlayer(data: IPlayer, pos: 'QB' | 'WR' | 'TE' | 'RB'): Fftoolbox.scrape.IPlayer {
-        let { first, last } = this.parseName(data.name);
+        let { first, last, suffix } = this.parseName(data.name);
 
         let player: Fftoolbox.scrape.IPlayer = _.extend({}, data, {
           first_name: first,
           last_name: last,
-          teamId: this.getTeam(data.team).id,
+          suffix,
+          teamId: this.getTeam(data.team.toUpperCase()).id,
           position: pos
         });
 
@@ -194,17 +194,18 @@ export namespace Fftoolbox {
       public getTeam(short: string): Fftoolbox.models.INflTeam {
         let unconvetionalShorts = [
           'NWE', 'TAM', 'SFO', 'NOR', 'SDG', 'SD', 'KAN',
-          'GNB', 'STL', 'JAC'
+          'GNB', 'STL', 'JAC', 'WSH'
         ]
 
         if (_.indexOf(unconvetionalShorts, short.toUpperCase()) >= 0) {
           short = this.convertUnconventialShort(short);
         }
 
-        return this.loopback.nflTeams[short];
+        return this.loopback.nflTeams[short.toUpperCase()];
       }
 
       public convertUnconventialShort(str: string): string {
+        str = str.toUpperCase();
         if (str === 'NWE') {
           return 'NE';
         } else if (str === 'TAM') {
@@ -225,7 +226,10 @@ export namespace Fftoolbox {
           return 'LAR';
         } else if (str === 'JAC') {
           return 'JAX';
-        } else {
+        } else if (str === 'WSH') {
+          return 'WAS';
+        }
+        else {
           console.log(chalk.bgRed(`ERROR TRYING TO FIND TEAM FOR ${str}`));
           return null;
         }
@@ -302,7 +306,7 @@ export namespace Fftoolbox {
      */
 
     public playerUpsertWithWhere(model: scrape.IPlayer, where?: any): Promise<models.IPlayer> {
-      console.log(chalk.blue(`Fftoday: playerUpsertWithWhere for ${model.first_name} ${model.last_name}`));
+      console.log(chalk.blue(`Fftoolbox: playerUpsertWithWhere for ${model.first_name} ${model.last_name}`));
       let filterWhere = _.extend({}, {
         first_name: model.first_name,
         last_name: model.last_name

@@ -1,10 +1,7 @@
 import osmosis = require('osmosis');
 import { FftodayTools } from './';
 import { Fftoolbox } from './../fftoolbox';
-import * as moment from 'moment';
 import * as _ from 'lodash';
-
-const app = require('./../../server/server');
 
 export class FftodayQbScrape extends FftodayTools {
   public year = 2017;
@@ -17,7 +14,6 @@ export class FftodayQbScrape extends FftodayTools {
   }
 
   public scrapeProjSeas() {
-    let projStatUrl
     this.osmosis.get(this.projSeasStatUrl)
       .find(`body`)
       .set({

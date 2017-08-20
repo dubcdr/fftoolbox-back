@@ -7,6 +7,10 @@ export class FftodayTools extends Fftoolbox.scrape.ScrapeTools {
   public baseUrl = 'http://www.fftoday.com/';
   public outletId = Fftoolbox.EOutlets.fftoday;
 
+  constructor() {
+    super();
+  }
+
   public getOutletIdFromLink(link: string): number {
     let reg = /\/\d*\//;
     let response = link.match(reg) as RegExpMatchArray;
@@ -25,10 +29,6 @@ export class FftodayTools extends Fftoolbox.scrape.ScrapeTools {
     } else {
       return moment();
     }
-  }
-
-  constructor() {
-    super();
   }
 
   public parseOutletPlayer(data: Fftoolbox.scrape.IScrapeProjSeasResponse, pos: 'QB' | 'WR' | 'TE' | 'RB'): Fftoolbox.scrape.IPlayer {
