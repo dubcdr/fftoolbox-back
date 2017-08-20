@@ -6,7 +6,7 @@
     "module": "commonjs",
     "declaration": false,
     "noImplicitAny": false,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "removeComments": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,

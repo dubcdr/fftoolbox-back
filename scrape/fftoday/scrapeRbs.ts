@@ -7,10 +7,10 @@ import * as chalk from 'chalk';
 
 const app = require('./../../server/server');
 
-export class FftodayWrScrape extends FftodayTools {
+export class FftodayRbScrape extends FftodayTools {
   public limit = Number.MAX_SAFE_INTEGER;
   public year = 2017;
-  public projSeasStatUrl = `http://www.fftoday.com/rankings/playerproj.php?Season=${this.year}&PosID=30&LeagueID=17`;
+  public projSeasStatUrl = `http://www.fftoday.com/rankings/playerproj.php?Season=${this.year}&PosID=20&LeagueID=17`;
   public osmosis = osmosis(this.projSeasStatUrl);
 
   constructor() {
@@ -31,31 +31,31 @@ export class FftodayWrScrape extends FftodayTools {
         'name_link': 'td:nth-child(2) > a > @href',
         'team': 'td:nth-child(3)',
         'bye': 'td:nth-child(4)',
-        'rec': 'td:nth-child(5)',
-        'rec_yd': 'td:nth-child(6)',
-        'rec_td': 'td:nth-child(7)',
-        'ru_att': 'td:nth-child(8)',
-        'ru_yd': 'td:nth-child(9)',
-        'ru_td': 'td:nth-child(10)',
+        'ru_att': 'td:nth-child(5)',
+        'ru_yd': 'td:nth-child(6)',
+        'ru_td': 'td:nth-child(7)',
+        'rec': 'td:nth-child(8)',
+        'rec_yd': 'td:nth-child(9)',
+        'rec_td': 'td:nth-child(10)',
         'fantasy_pts': 'td:nth-child(11)'
       })
-      .data((response: IScrapeWrResponse) => {
-        // console.log(response.name);
+      .data((response: IScrapeRbResponse) => {
+        // console.log(response);
         this.parseProjSeas(response);
       })
   }
 
-  public async parseProjSeas(obj: IScrapeWrResponse): Promise<Fftoolbox.models.IOffProjSeasStat> {
-    obj.position = 'WR';
+  public async parseProjSeas(obj: IScrapeRbResponse): Promise<Fftoolbox.models.IOffProjSeasStat> {
+    obj.position = 'RB';
 
     let projSeason = await this.upsertProjOffSeasStat(obj);
 
-    return projSeason;
+    return projSeason
   }
 
 }
 
-interface IScrapeWrResponse extends Fftoolbox.scrape.IScrapeProjSeasResponse {
+interface IScrapeRbResponse extends Fftoolbox.scrape.IScrapeProjSeasResponse {
   rec: string;
   rec_yd: string;
   rec_td: string;
@@ -64,5 +64,5 @@ interface IScrapeWrResponse extends Fftoolbox.scrape.IScrapeProjSeasResponse {
   ru_td: string;
 }
 
-let test = new FftodayWrScrape();
+let test = new FftodayRbScrape();
 test.scrapeProjSeas();

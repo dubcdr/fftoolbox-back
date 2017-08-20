@@ -3,17 +3,17 @@ import * as chalk from 'chalk';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
-export class FftodayTools extends Fftoolbox.Loopback {
-  public static baseUrl = 'http://www.fftoday.com/';
-  public static outletId = 3;
+export class FftodayTools extends Fftoolbox.scrape.ScrapeTools {
+  public baseUrl = 'http://www.fftoday.com/';
+  public outletId = Fftoolbox.EOutlets.fftoday;
 
-  public static getFftodayIdFromLink(link: string): number {
+  public getOutletIdFromLink(link: string): number {
     let reg = /\/\d*\//;
     let response = link.match(reg) as RegExpMatchArray;
     return parseInt(response[0].substr(1, response[0].length - 1));
   }
 
-  public static parseDate(str: string): moment.Moment {
+  public parseDate(str: string): moment.Moment {
     let regEx = /\b(\d{1,2})\/(\d{1,2})\/(\d{1,4})\b/
     let result = regEx.exec(str);
     if (result) {
@@ -31,109 +31,30 @@ export class FftodayTools extends Fftoolbox.Loopback {
     super();
   }
 
-  public async initProjOffSeasStat(scrapeData: IScrapeFFtodayResponse, pos: 'QB' | 'WR' | 'TE' | 'RB'): Promise<Fftoolbox.IProjOffSeasStat> {
-    console.log(chalk.blue('Starting initProjOffSeasStat'))
-    let name = FftodayTools.parseName(scrapeData.name);
-    if (name) {
-      console.log(chalk.dim(`${name.first} ${name.last}`));
-      let fftodayId = FftodayTools.getFftodayIdFromLink(scrapeData.name_link);
+  public parseOutletPlayer(data: Fftoolbox.scrape.IScrapeProjSeasResponse, pos: 'QB' | 'WR' | 'TE' | 'RB'): Fftoolbox.scrape.IPlayer {
+    let player = super.parseOutletPlayer(data, pos);
+    player.fftodayId = this.getOutletIdFromLink(data.name_link);
 
-      let playerId = await this.findPlayerIdByFirstLast(name.first, name.last);
-      if (playerId > 0) {
-        console.log(chalk.dim(`playerdId: ${playerId}`));
-      }
-      let projDate = FftodayTools.parseDate(scrapeData.dateString);
-
-      // if player has not been previously created
-      // if (!(playerId > 0)) {
-      if (true) {
-        console.log(chalk.bgRed(`Player ${name.first} ${name.last} not found. Creating...`));
-        // console.log('need to make player for', scrapeData);
-        let player: Fftoolbox.IPlayer = {
-          first_name: name.first,
-          last_name: name.last,
-          position: pos,
-          teamId: this.nflTeams[scrapeData.team].id,
-          fftodayId: fftodayId,
-        }
-        player = await this.playerUpsertWithWhere(player);
-        console.log(chalk.bgGreen('Player Inserted'), player);
-        if (player && player.id) {
-          playerId = player.id;
-        };
-      }
-
-      let data: Fftoolbox.IProjOffSeasStat = {
-        date: projDate.toDate(),
-        year: projDate.toDate().getFullYear(),
-        outletId: Fftoolbox.EOutlets.fftoday,
-        fantasy_pts: Fftoolbox.Utilities.parseStatToInt(scrapeData.fantasy_pts),
-        playerId,
-        teamId: this.getTeam(scrapeData.team).id
-      }
-      // console.log(chalk.blue('End initProjOffSeasStat with result:'), data);
-
-      return data;
-    }
-    else {
-      throw Error(`Cant parse name for ${scrapeData.name}`);
-    }
+    return player;
   }
 
-  public appendIdsToPlayerModel(first_name: string, last_name: string, fftodayId: number): Promise<Fftoolbox.IPlayer> {
-    console.log(chalk.dim(`Adding fftoday player id: ${fftodayId} to ${first_name} ${last_name}`));
-    return new Promise<any>((resolve, reject) => {
-      this.lb.models.Player.upsertWithWhere({
-        first_name,
-        last_name
-      }, {
-          fftodayId
-        }, (err, object) => {
-          if (err) {
-            reject(err);
-          } else {
-            // console.log(chalk.dim('added, player object:'), object);
-            resolve(object);
-          }
-        })
+  public async upsertProjOffSeasStat(scrapeData: Fftoolbox.scrape.IScrapeProjSeasResponse): Promise<Fftoolbox.models.IOffProjSeasStat> {
+    console.log(chalk.cyan(`Fftoday upsertProjOffSeasStat for ${scrapeData.name}`));
+    let scrapePlayer = this.parseOutletPlayer(scrapeData, scrapeData.position);
+    let player = await this.loopback.playerUpsertWithWhere(scrapePlayer);
+
+    let projDate = this.parseDate(scrapeData.dateString);
+    let data = _.extend({}, scrapeData, {
+      playerId: player.id,
+      outletId: this.outletId,
+      teamId: player.teamId,
+      date: projDate,
+      year: projDate.get('y')
     });
-  }
 
-  public static parseName(str: string): { first: string, last: string, suffix?: string } | null {
-    console.log(`begin parse name for ${str}`);
-    const regEx = /([\w-.]+)\s([\w-.]+)(?:\s)?([\w.]+)?/g
-    let matches = regEx.exec(str);
-    console.log('matches', matches);
-    if (matches) {
-      let name = {
-        first: matches[1],
-        last: matches[2]
-      };
-      if (typeof matches[3] === 'string') {
-        name = _.extend(name, { suffix: matches[3] })
-      };
-      return name;
-    } else {
-      return null;
-    }
+    let projSeason = await this.loopback.projSeasonUpsertWithWhere(data)
+    // console.log(chalk.dim(`proj season for ${player.first_name} ${player.last_name}`), projSeason);
+    return projSeason;
   }
-
-  public getTeam(short: string) {
-    if (short === 'JAC') {
-      return this.nflTeams['JAX']
-    } else {
-      return this.nflTeams[short];
-    }
-  }
-
 
 };
-
-export interface IScrapeFFtodayResponse {
-  dateString: string;
-  name: string;
-  name_link: string;
-  team: string;
-  bye: string;
-  fantasy_pts: string;
-}

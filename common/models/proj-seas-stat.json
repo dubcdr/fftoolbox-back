@@ -10,16 +10,8 @@
     }
   },
   "properties": {
-    "year": {
-      "type": "number",
-      "required": true
-    },
     "fantasy_pts": {
       "type": "number"
-    },
-    "outletId": {
-      "type": "number",
-      "required": true
     },
     "date": {
       "type": "date",

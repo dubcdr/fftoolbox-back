@@ -10,17 +10,12 @@
     "validateUpsert": true
   },
   "properties": {
-    "year": {
-      "type": "number",
-      "required": true
-    },
     "gp": {
       "type": "number",
       "required": false
     },
     "fantasy_pts": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "vbd": {
       "type": "number"

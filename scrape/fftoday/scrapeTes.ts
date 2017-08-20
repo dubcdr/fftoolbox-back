@@ -7,10 +7,10 @@ import * as chalk from 'chalk';
 
 const app = require('./../../server/server');
 
-export class FftodayWrScrape extends FftodayTools {
+export class FftodayTeScrape extends FftodayTools {
   public limit = Number.MAX_SAFE_INTEGER;
   public year = 2017;
-  public projSeasStatUrl = `http://www.fftoday.com/rankings/playerproj.php?Season=${this.year}&PosID=30&LeagueID=17`;
+  public projSeasStatUrl = `http://www.fftoday.com/rankings/playerproj.php?Season=${this.year}&PosID=40&LeagueID=17`;
   public osmosis = osmosis(this.projSeasStatUrl);
 
   constructor() {
@@ -19,7 +19,7 @@ export class FftodayWrScrape extends FftodayTools {
 
   public scrapeProjSeas() {
     this.osmosis.get(this.projSeasStatUrl)
-      .paginate('div[align="center"] > a:contains("Next Page")', 3)
+      .paginate('div[align="center"] > a:contains("Next Page")', 2)
       .delay(2500)
       .find('body')
       .set({
@@ -34,35 +34,29 @@ export class FftodayWrScrape extends FftodayTools {
         'rec': 'td:nth-child(5)',
         'rec_yd': 'td:nth-child(6)',
         'rec_td': 'td:nth-child(7)',
-        'ru_att': 'td:nth-child(8)',
-        'ru_yd': 'td:nth-child(9)',
-        'ru_td': 'td:nth-child(10)',
-        'fantasy_pts': 'td:nth-child(11)'
+        'fantasy_pts': 'td:nth-child(8)'
       })
-      .data((response: IScrapeWrResponse) => {
-        // console.log(response.name);
+      .data((response: IScrapeTeResponse) => {
+        // console.log(response);
         this.parseProjSeas(response);
       })
   }
 
-  public async parseProjSeas(obj: IScrapeWrResponse): Promise<Fftoolbox.models.IOffProjSeasStat> {
-    obj.position = 'WR';
+  public async parseProjSeas(obj: IScrapeTeResponse): Promise<Fftoolbox.models.IOffProjSeasStat> {
+    obj.position = 'TE';
 
     let projSeason = await this.upsertProjOffSeasStat(obj);
 
-    return projSeason;
+    return projSeason
   }
 
 }
 
-interface IScrapeWrResponse extends Fftoolbox.scrape.IScrapeProjSeasResponse {
+interface IScrapeTeResponse extends Fftoolbox.scrape.IScrapeProjSeasResponse {
   rec: string;
   rec_yd: string;
   rec_td: string;
-  ru_att: string;
-  ru_yd: string;
-  ru_td: string;
 }
 
-let test = new FftodayWrScrape();
+let test = new FftodayTeScrape();
 test.scrapeProjSeas();

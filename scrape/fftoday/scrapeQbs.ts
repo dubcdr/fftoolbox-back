@@ -1,5 +1,5 @@
 import osmosis = require('osmosis');
-import { FftodayTools, IScrapeFFtodayResponse } from './';
+import { FftodayTools } from './';
 import { Fftoolbox } from './../fftoolbox';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -7,15 +7,17 @@ import * as _ from 'lodash';
 const app = require('./../../server/server');
 
 export class FftodayQbScrape extends FftodayTools {
-  public projSeasStatUrl = 'http://www.fftoday.com/rankings/playerproj.php?Season=2017&PosID=10&LeagueID=17';
+  public year = 2017;
+  public projSeasStatUrl = `http://www.fftoday.com/rankings/playerproj.php?Season=${this.year}&PosID=10&LeagueID=17`;
   public osmosis = osmosis(this.projSeasStatUrl);
-  public limit = 50;
+  public limit = Number.MAX_SAFE_INTEGER;
 
   constructor() {
     super();
   }
 
-  public scrapeQbs() {
+  public scrapeProjSeas() {
+    let projStatUrl
     this.osmosis.get(this.projSeasStatUrl)
       .find(`body`)
       .set({
@@ -45,31 +47,16 @@ export class FftodayQbScrape extends FftodayTools {
       .debug(console.log);
   }
 
-  public async parseQbData(obj: IScrapeQbResponse): Promise<Fftoolbox.IProjOffSeasStat> {
-    let name = FftodayTools.parseName(obj.name);
+  public async parseQbData(obj: IScrapeQbResponse): Promise<Fftoolbox.models.IOffProjSeasStat> {
+    obj.position = 'QB';
 
-    let projData = await this.initProjOffSeasStat(obj, 'QB')
-
-    await this.appendIdsToPlayerModel(name.first, name.last, projData.outletId);
-
-    let data: Fftoolbox.IProjOffSeasStat = _.extend(projData, {
-      ps_att: Fftoolbox.Utilities.parseStatToInt(obj.ps_att),
-      ps_cmp: Fftoolbox.Utilities.parseStatToInt(obj.ps_cmp),
-      ps_td: Fftoolbox.Utilities.parseStatToInt(obj.ps_td),
-      ps_yd: Fftoolbox.Utilities.parseStatToInt(obj.ps_yd),
-      int: Fftoolbox.Utilities.parseStatToInt(obj.int),
-      ru_att: Fftoolbox.Utilities.parseStatToInt(obj.ru_att),
-      ru_td: Fftoolbox.Utilities.parseStatToInt(obj.ru_td),
-      ru_yd: Fftoolbox.Utilities.parseStatToInt(obj.ru_yd),
-    });
-
-    let projSeason = await this.projSeasonFindOrCreate(data);
+    let projSeason = await this.upsertProjOffSeasStat(obj);
 
     return projSeason;
   }
 }
 
-interface IScrapeQbResponse extends IScrapeFFtodayResponse {
+interface IScrapeQbResponse extends Fftoolbox.scrape.IScrapeProjSeasResponse {
   ps_cmp: string;
   ps_att: string;
   ps_yd: string;
@@ -81,4 +68,4 @@ interface IScrapeQbResponse extends IScrapeFFtodayResponse {
 }
 
 let test = new FftodayQbScrape();
-test.scrapeQbs();
+test.scrapeProjSeas();
