@@ -37,6 +37,12 @@
     "fftodayId": {
       "type": "number"
     },
+    "fantasyProsId": {
+      "type": "string"
+    },
+    "cbsId": {
+      "type": "string"
+    },
     "createdOn": {
       "type": "date"
     },

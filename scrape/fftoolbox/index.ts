@@ -15,7 +15,8 @@ export namespace Fftoolbox {
     pfr = 1,
     fftoday,
     espn,
-    fpros
+    fpros,
+    cbs
   }
 
   export enum EPosition {
@@ -69,6 +70,7 @@ export namespace Fftoolbox {
       teamId?: number;
       playerId?: number;
       outletId?: number;
+      id?: number;
     }
 
     export interface IOffWeekStat extends IBaseStat {
@@ -101,6 +103,7 @@ export namespace Fftoolbox {
       pfrId?: string,
       espnId?: number,
       fftodayId?: number,
+      cbsId?: string,
       id?: number
     }
 
@@ -379,7 +382,7 @@ export namespace Fftoolbox {
      */
 
     public projSeasonUpsertWithWhere(model: scrape.IOffProjSeasStat, where?: any): Promise<models.IOffProjSeasStat> {
-      console.log(chalk.blue(`Fftoolbox: projSeasonUpsertWithWhere for ${model.playerId}`));
+      // console.log(chalk.blue(`Fftoolbox: projSeasonUpsertWithWhere for ${model.playerId}`));
       let transformed = scrape.parseOffProjSeasStat(model);
       let whereFilter = _.assign({}, {
         year: model.year,
