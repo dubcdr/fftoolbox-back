@@ -1,0 +1,90 @@
+{
+  "name": "NflSchedule",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "teamId": {
+      "type": "number",
+      "required": true
+    },
+    "year": {
+      "type": "number",
+      "required": true
+    },
+    "wk1Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk2Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk3Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk4Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk5Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk6Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk7Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wek8Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk9Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk1Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk11Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk12Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk13Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk14Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk15Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk16Opp": {
+      "type": "number",
+      "required": true
+    },
+    "wk17Opp": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

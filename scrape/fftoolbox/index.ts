@@ -12,9 +12,10 @@ const app = require('./../../server/server');
 
 export namespace Fftoolbox {
   export enum EOutlets {
-    pff = 1,
+    pfr = 1,
     fftoday,
-    espn
+    espn,
+    fpros
   }
 
   export enum EPosition {

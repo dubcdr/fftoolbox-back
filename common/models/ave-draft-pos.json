@@ -1,0 +1,44 @@
+{
+  "name": "AveDraftPos",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "playerId": {
+      "type": "number",
+      "required": true
+    },
+    "pick": {
+      "type": "number"
+    },
+    "roundNumber": {
+      "type": "number"
+    },
+    "roundPick": {
+      "type": "number"
+    },
+    "outletId": {
+      "type": "number",
+      "required": true
+    },
+    "posRank": {
+      "type": "number"
+    },
+    "year": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "player": {
+      "type": "belongsTo",
+      "model": "Player",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

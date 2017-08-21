@@ -65,6 +65,11 @@
       "type": "hasMany",
       "model": "ProjSeasStat",
       "foreignKey": ""
+    },
+    "aveDraftPos": {
+      "type": "hasMany",
+      "model": "AveDraftPos",
+      "foreignKey": ""
     }
   },
   "acls": [],
