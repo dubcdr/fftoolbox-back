@@ -1,0 +1,80 @@
+{
+  "name": "BaseStat",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "ps_yd": {
+      "type": "number"
+    },
+    "ps_att": {
+      "type": "number"
+    },
+    "ps_cmp": {
+      "type": "number"
+    },
+    "ps_td": {
+      "type": "number"
+    },
+    "ru_att": {
+      "type": "number"
+    },
+    "ru_yd": {
+      "type": "number"
+    },
+    "ru_td": {
+      "type": "number"
+    },
+    "rec_tg": {
+      "type": "number"
+    },
+    "rec": {
+      "type": "number"
+    },
+    "rec_yd": {
+      "type": "number"
+    },
+    "rec_td": {
+      "type": "number"
+    },
+    "two_pt": {
+      "type": "number"
+    },
+    "ret_td": {
+      "type": "number"
+    },
+    "fum": {
+      "type": "number"
+    },
+    "int": {
+      "type": "number"
+    },
+    "teamId": {
+      "type": "number"
+    },
+    "playerId": {
+      "type": "number",
+      "required": true
+    },
+    "outletId": {
+      "type": "number",
+      "required": true
+    },
+    "year": {
+      "type": "number",
+      "required": true
+    },
+    "createdOn": {
+      "type": "date"
+    },
+    "modifiedOn": {
+      "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

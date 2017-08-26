@@ -1,6 +1,6 @@
 {
   "name": "OffWeekStat",
-  "base": "OffSeasonStat",
+  "base": "BaseStat",
   "idInjection": true,
   "options": {
     "postgresql": {
@@ -14,8 +14,8 @@
       "type": "number",
       "required": true
     },
-    "opponentId": {
-      "type": "string",
+    "oppId": {
+      "type": "number",
       "required": true
     }
   },

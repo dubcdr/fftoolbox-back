@@ -26,11 +26,61 @@
       "required": true
     },
     "teamId": {
+      "type": "number"
+    },
+    "pfrId": {
       "type": "string"
+    },
+    "espnId": {
+      "type": "number"
+    },
+    "fftodayId": {
+      "type": "number"
+    },
+    "fantasyProsId": {
+      "type": "string"
+    },
+    "cbsId": {
+      "type": "string"
+    },
+    "yahooId": {
+      "type": "string"
+    },
+    "createdOn": {
+      "type": "date"
+    },
+    "modifiedOn": {
+      "type": "date"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "bio": {
+      "type": "hasOne",
+      "model": "PlayerBio",
+      "foreignKey": ""
+    },
+    "season": {
+      "type": "hasMany",
+      "model": "OffSeasonStat",
+      "foreignKey": ""
+    },
+    "week": {
+      "type": "hasMany",
+      "model": "OffWeekStat",
+      "foreignKey": ""
+    },
+    "projSeasStats": {
+      "type": "hasMany",
+      "model": "ProjSeasStat",
+      "foreignKey": ""
+    },
+    "aveDraftPos": {
+      "type": "hasMany",
+      "model": "AveDraftPos",
+      "foreignKey": ""
+    }
+  },
   "acls": [],
   "methods": {}
 }

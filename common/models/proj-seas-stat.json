@@ -1,24 +1,21 @@
 {
-  "name": "OffSeasonStat",
+  "name": "ProjSeasStat",
   "base": "BaseStat",
   "idInjection": true,
   "options": {
+    "validateUpsert": true,
     "postgresql": {
       "schema": "fftoolbox",
-      "table": "off_season_stat"
-    },
-    "validateUpsert": true
+      "table": "proj_season_stat"
+    }
   },
   "properties": {
-    "gp": {
-      "type": "number",
-      "required": false
-    },
     "fantasy_pts": {
       "type": "number"
     },
-    "vbd": {
-      "type": "number"
+    "date": {
+      "type": "date",
+      "required": true
     }
   },
   "validations": [],

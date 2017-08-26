@@ -50,5 +50,29 @@
   "OffWeekStat": {
     "dataSource": "postgres",
     "public": true
+  },
+  "BaseStat": {
+    "dataSource": null,
+    "public": false
+  },
+  "PlayerBio": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "ProjSeasStat": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "Outlet": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "AveDraftPos": {
+    "dataSource": "postgres",
+    "public": true
+  },
+  "NflSchedule": {
+    "dataSource": "postgres",
+    "public": true
   }
 }

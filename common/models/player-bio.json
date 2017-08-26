@@ -1,0 +1,45 @@
+{
+  "name": "PlayerBio",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "postgresql": {
+      "schema": "fftoolbox",
+      "table": "player_bio"
+    },
+    "validateUpsert": true
+  },
+  "properties": {
+    "playerId": {
+      "type": "number",
+      "required": true
+    },
+    "dob": {
+      "type": "date"
+    },
+    "height": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "number"
+    },
+    "college": {
+      "type": "string"
+    },
+    "twitter": {
+      "type": "string"
+    },
+    "draft_year": {
+      "type": "number",
+      "length": 4
+    },
+    "jersey_num": {
+      "type": "number",
+      "length": 2
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
