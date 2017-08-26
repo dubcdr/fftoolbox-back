@@ -8,6 +8,11 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as chalk from 'chalk';
 
+/* This is to export the models from the sdk generator */
+export * from './models/index';
+
+import * as LbModelGenerator from './models'
+
 const app = require('./../../server/server');
 
 export namespace Fftoolbox {
@@ -30,65 +35,17 @@ export namespace Fftoolbox {
   }
 
   export namespace models {
-    export interface IPlayer {
-      first_name: string,
-      last_name: string,
-      suffix?: string,
+    export interface IPlayer extends LbModelGenerator.PlayerInterface {
       position: 'QB' | 'WR' | 'TE' | 'RB',
-      teamId?: number,
-      pfrId?: number,
-      espnId?: number,
-      fftodayId?: number,
-      id?: number
     }
 
-    export interface INflTeam {
-      id?: number,
-      abbr: string,
-      city: string,
-      name: string,
-      conf: string,
-      div: string
-    }
+    export interface INflTeam extends LbModelGenerator.NflTeamInterface { }
 
-    export interface IBaseStat {
-      ps_yd?: number;
-      ps_att?: number;
-      ps_cmp?: number;
-      ps_td?: number;
-      ru_att?: number;
-      ru_yd?: number;
-      ru_td?: number;
-      rec_tg?: number;
-      rec?: number;
-      rec_yd?: number;
-      rec_td?: number;
-      two_pt?: number;
-      ret_td?: number;
-      fum?: number;
-      int?: number;
-      year?: number;
-      teamId?: number;
-      playerId?: number;
-      outletId?: number;
-      id?: number;
-    }
+    export interface IOffWeekStat extends LbModelGenerator.OffWeekStatInterface { }
 
-    export interface IOffWeekStat extends IBaseStat {
-      week?: number;
-      oppId?: number;
-    }
+    export interface IOffSeasStat extends LbModelGenerator.OffSeasonStatInterface { }
 
-    export interface IOffSeasStat extends IBaseStat {
-      gp?: number;
-      fantasy_pts?: number;
-      vbd?: number
-    }
-
-    export interface IOffProjSeasStat extends IBaseStat {
-      fantasy_pts: number;
-      date?: moment.Moment;
-    }
+    export interface IOffProjSeasStat extends LbModelGenerator.ProjSeasStatInterface { }
   }
 
   export namespace scrape {
