@@ -43,6 +43,9 @@
     "cbsId": {
       "type": "string"
     },
+    "yahooId": {
+      "type": "string"
+    },
     "createdOn": {
       "type": "date"
     },

@@ -1,0 +1,6 @@
+dump instructions:
+
+pg_dump -Fc -o -f fftoolbox.sql fftoolbox
+
+restore instructions:
+pg_restore -h fftoolbox.cc7r5nw8kinb.us-west-2.rds.amazonaws.com --clean -Fc -v -d fftoolbox -U dubcdr fftoolbox.sql

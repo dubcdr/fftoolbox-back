@@ -16,7 +16,8 @@ export namespace Fftoolbox {
     fftoday,
     espn,
     fpros,
-    cbs
+    cbs,
+    yahoo
   }
 
   export enum EPosition {
@@ -219,9 +220,9 @@ export namespace Fftoolbox {
         } else if (str === 'NOR') {
           return 'NO';
         } else if (str === 'SDG') {
-          return 'LAR';
+          return 'LAC';
         } else if (str === 'SD') {
-          return 'LAR';
+          return 'LAC';
         } else if (str === 'KAN') {
           return 'KC';
         } else if (str === 'GNB') {
@@ -274,8 +275,6 @@ export namespace Fftoolbox {
     }
   }
 
-
-
   export class Utilities {
     public static parseStatToInt(str: string) {
       if (str == null) {
@@ -291,7 +290,6 @@ export namespace Fftoolbox {
       }
     }
   }
-
 
   export class Loopback {
     public lb: any = app;
