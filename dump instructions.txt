@@ -1,6 +1,12 @@
-dump instructions:
+local to aws
 
+dump instructions:
 pg_dump -Fc -o -f fftoolbox.sql fftoolbox
 
 restore instructions:
 pg_restore -h fftoolbox.cc7r5nw8kinb.us-west-2.rds.amazonaws.com --clean -Fc -v -d fftoolbox -U dubcdr fftoolbox.sql
+
+aws to local
+pg_dump -h fftoolbox.cc7r5nw8kinb.us-west-2.rds.amazonaws.com -Fc -U dubcdr -f dump.sql fftoolbox
+
+pg_restore --clean -Fc -v -d fftoolbox -U dubcdr db_back/dump.sql

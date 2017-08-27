@@ -63,6 +63,7 @@ export namespace Fftoolbox {
       pfrId?: string,
       espnId?: number,
       fftodayId?: number,
+      fantasyProsId?: string,
       cbsId?: string,
       yahooId?: string,
       id?: number
@@ -142,7 +143,8 @@ export namespace Fftoolbox {
       public parseName(str: string): { first: string, last: string, suffix?: string } | null {
         const regEx = /([\w-.']+)\s([\w-.']+)(?:\s)?([\w.]+)?/g
         let matches = regEx.exec(str);
-        if (matches) {
+        // console.log(`parse name results for ${str}`, matches);
+        if (matches != null) {
           let name = {
             first: matches[1],
             last: matches[2]
@@ -178,6 +180,10 @@ export namespace Fftoolbox {
 
         if (_.indexOf(unconvetionalShorts, short.toUpperCase()) >= 0) {
           short = this.convertUnconventialShort(short);
+        }
+
+        if (this.loopback.nflTeams[short.toUpperCase()] == null || this.loopback.nflTeams[short.toUpperCase()] === undefined) {
+          throw Error(`Error trying to get team for ${short}`);
         }
 
         return this.loopback.nflTeams[short.toUpperCase()];
