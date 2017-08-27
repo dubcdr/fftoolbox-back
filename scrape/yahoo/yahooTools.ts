@@ -13,8 +13,25 @@ export class YahooTools extends Fftoolbox.scrape.ScrapeTools {
     super();
   }
 
-  public getOutletIdFromLink(link: string): number {
-    return 0;
+  public getOutletIdFromLink(link: string): string {
+    const regEx = /\/(\d+)$/
+    let matches = regEx.exec(link);
+    if (matches !== null) {
+      return matches[1];
+    } else {
+      throw new Error('No outletId found in Yahoo getOutletIdFromLink');
+    }
+  }
+
+  public getTeamIdFromLink(link: string): number {
+    const regEx = /^(\w{2,3})/
+    let matches = regEx.exec(link);
+    // console.log(`matches for ${link}`, matches);
+    if (matches !== null) {
+      return this.getTeam(matches[1].toUpperCase()).id;
+    } else {
+      throw new Error(`No teamId for ${link}, consider making a new rule`);
+    }
   }
 
   public parseDate(str: string): moment.Moment {

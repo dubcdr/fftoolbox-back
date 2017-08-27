@@ -46,6 +46,8 @@ export namespace Fftoolbox {
     export interface IOffSeasStat extends LbModelGenerator.OffSeasonStatInterface { }
 
     export interface IOffProjSeasStat extends LbModelGenerator.ProjSeasStatInterface { }
+
+    export interface IAvgDraftPos extends LbModelGenerator.AveDraftPosInterface { }
   }
 
   export namespace scrape {
@@ -62,6 +64,7 @@ export namespace Fftoolbox {
       espnId?: number,
       fftodayId?: number,
       cbsId?: string,
+      yahooId?: string,
       id?: number
     }
 
@@ -110,11 +113,25 @@ export namespace Fftoolbox {
       team: string;
     }
 
+    export interface IAvgDraftPost extends IPlayer {
+      playerId?: number;
+      pick?: string;
+      roundNumber?: string;
+      roundPick?: string;
+      outletId?: number;
+      posRank?: string;
+      year?: string;
+
+      // Scrape Player
+      team_string?: string;
+      pos_string?: string;
+    }
+
     export abstract class ScrapeTools {
       public abstract baseUrl: string;
       public abstract outletId: number;
 
-      public abstract parseDate(str: string): moment.Moment;
+      public abstract parseDate(str: string): Date | moment.Moment;
       public abstract getOutletIdFromLink(link: string): number | string;
 
       public loopback = new Fftoolbox.Loopback();
@@ -135,7 +152,7 @@ export namespace Fftoolbox {
           };
           return name;
         } else {
-          return null;
+          throw new Error('Error Parsing Name in Fftoolbox');
         }
       }
 
@@ -198,7 +215,7 @@ export namespace Fftoolbox {
       }
     }
 
-    export function parseBaseStat(obj: scrape.IBaseStat): models.IBaseStat {
+    export function parseBaseStat(obj: scrape.IBaseStat) {
       const parseStrToStat = Fftoolbox.Utilities.parseStatToInt;
       return {
         ps_att: parseStrToStat(obj.ps_att),
@@ -225,9 +242,10 @@ export namespace Fftoolbox {
 
     export function parseOffProjSeasStat(obj: scrape.IOffProjSeasStat): models.IOffProjSeasStat {
       const parseStrToStat = Fftoolbox.Utilities.parseStatToInt;
+      let newDate = moment();
       return _.extend({}, scrape.parseBaseStat(obj), {
         fantasy_pts: parseStrToStat(obj.fantasy_pts),
-        date: obj.date
+        date: obj.date.toDate()
       });
     }
   }
@@ -280,6 +298,7 @@ export namespace Fftoolbox {
             console.error(chalk.bgRed(`error on playerUpsertWithWhere:`), model);
             reject(err);
           } else {
+            console.log(chalk.green(`Upsert Successful for ${model.first_name} ${model.last_name}`))
             resolve(model);
           }
         })
@@ -358,6 +377,45 @@ export namespace Fftoolbox {
           }
         })
       })
+    }
+
+    /**
+     *
+     *  AVERAGE DRAFT POSITION
+     *
+     */
+
+    public aveDraftPosUpsertWithWhere(model: models.IAvgDraftPos, where?: any): Promise<models.IAvgDraftPos> {
+      let whereFilter = _.assign({}, {
+        year: model.year,
+        outletId: model.outletId,
+        playerId: model.playerId,
+        createdOn: {
+          gt: moment().subtract(6, 'd').toDate(),
+          lt: moment().add(1, 'd').toDate()
+        }
+      }, where);
+      return new Promise((resolve, reject) => {
+        this.lb.models.AveDraftPos.upsertWithWhere(whereFilter, model, (err, resultModel) => {
+          if (err) {
+            reject(err);
+          } else {
+            console.log(chalk.green(`aveDraftPosUpsert Successful for playerId ${model.playerId}, pick ${model.pick}`));
+            resolve(resultModel);
+          }
+        })
+      })
+    }
+
+    public async convertAveDraftPosScrape2Model(scrape: scrape.IAvgDraftPost): Promise<models.IAvgDraftPos> {
+      let player = await this.playerUpsertWithWhere(scrape);
+      let model = {
+        playerId: player.id,
+        outletId: scrape.outletId,
+        year: moment().get('y'),
+        pick: parseFloat(scrape.pick)
+      } as models.IAvgDraftPos;
+      return model;
     }
 
     /**
