@@ -3,7 +3,7 @@
     "name": "db",
     "connector": "memory"
   },
-  "postgres_local": {
+  "postgres": {
     "host": "localhost",
     "port": 5432,
     "database": "fftoolbox",
@@ -13,7 +13,7 @@
     "schema": "fftoolbox",
     "connector": "postgresql"
   },
-  "postgres": {
+  "postgres_aws": {
     "host": "fftoolbox.cc7r5nw8kinb.us-west-2.rds.amazonaws.com",
     "port": 5432,
     "database": "fftoolbox",

@@ -61,7 +61,7 @@ export namespace Fftoolbox {
       teamId?: number,
       team: string,
       pfrId?: string,
-      espnId?: number,
+      espnId?: string,
       fftodayId?: number,
       fantasyProsId?: string,
       cbsId?: string,
