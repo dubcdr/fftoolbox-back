@@ -12,6 +12,8 @@ export interface AveDraftPosInterface {
   "outletId": number;
   "posRank"?: number;
   "year": number;
+  "createdOn"?: Date;
+  "modifiedOn"?: Date;
   "id"?: number;
   player?: Player;
 }
@@ -24,6 +26,8 @@ export class AveDraftPos implements AveDraftPosInterface {
   "outletId": number;
   "posRank": number;
   "year": number;
+  "createdOn": Date;
+  "modifiedOn": Date;
   "id": number;
   player: Player;
   constructor(data?: AveDraftPosInterface) {
@@ -85,6 +89,14 @@ export class AveDraftPos implements AveDraftPosInterface {
         "year": {
           name: 'year',
           type: 'number'
+        },
+        "createdOn": {
+          name: 'createdOn',
+          type: 'Date'
+        },
+        "modifiedOn": {
+          name: 'modifiedOn',
+          type: 'Date'
         },
         "id": {
           name: 'id',

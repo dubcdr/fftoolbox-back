@@ -7,12 +7,16 @@ export class EspnTools extends Fftoolbox.scrape.ScrapeTools {
   public baseUrl = 'http://www.espn.com/';
   public outletId = Fftoolbox.EOutlets.espn;
 
-  public getOutletIdFromLink(link: string): number {
-    return 0;
+  public getOutletIdFromLink(link: string): string {
+    return '';
   }
 
   public parseDate(str: string): moment.Moment {
     return moment();
+  }
+
+  public getTeamIdFromLink(str: string): number {
+    return this.getTeam(str).id;
   }
 
   public parsePosAndTeamStr(str: string): { team: string, pos: 'QB' | 'WR' | 'TE' | 'RB' } {

@@ -11,13 +11,34 @@
       "required": true
     },
     "pick": {
-      "type": "number"
+      "type": "number",
+      "postgresql": {
+        "columnName": "pick",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 6,
+        "dataScale": 3
+      }
     },
     "roundNumber": {
-      "type": "number"
+      "type": "number",
+      "postgresql": {
+        "columnName": "roundnumber",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 6,
+        "dataScale": 3
+      }
     },
     "roundPick": {
-      "type": "number"
+      "type": "number",
+      "postgresql": {
+        "columnName": "roundpick",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 6,
+        "dataScale": 3
+      }
     },
     "outletId": {
       "type": "number",
@@ -29,6 +50,12 @@
     "year": {
       "type": "number",
       "required": true
+    },
+    "createdOn": {
+      "type": "date"
+    },
+    "modifiedOn": {
+      "type": "date"
     }
   },
   "validations": [],

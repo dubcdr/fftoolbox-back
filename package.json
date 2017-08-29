@@ -10,7 +10,8 @@
     "start": "node .",
     "posttest": "npm run lint && nsp check",
     "autoupdate": "node common/models/models.js",
-    "generate-typescript": "./generate-models.sh"
+    "generate-typescript": "./generate-models.sh",
+    "dump-aws": "pg_dump -h fftoolbox.cc7r5nw8kinb.us-west-2.rds.amazonaws.com -U dubcdr -f db_back/dump-$1.sql fftoolbox"
   },
   "dependencies": {
     "compression": "^1.0.3",

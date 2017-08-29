@@ -15,7 +15,7 @@ export interface PlayerInterface {
   "position": string;
   "teamId"?: number;
   "pfrId"?: string;
-  "espnId"?: number;
+  "espnId"?: string;
   "fftodayId"?: number;
   "fantasyProsId"?: string;
   "cbsId"?: string;
@@ -37,7 +37,7 @@ export class Player implements PlayerInterface {
   "position": string;
   "teamId": number;
   "pfrId": string;
-  "espnId": number;
+  "espnId": string;
   "fftodayId": number;
   "fantasyProsId": string;
   "cbsId": string;
@@ -108,7 +108,7 @@ export class Player implements PlayerInterface {
         },
         "espnId": {
           name: 'espnId',
-          type: 'number'
+          type: 'string'
         },
         "fftodayId": {
           name: 'fftodayId',

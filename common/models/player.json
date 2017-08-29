@@ -32,7 +32,7 @@
       "type": "string"
     },
     "espnId": {
-      "type": "number"
+      "type": "string"
     },
     "fftodayId": {
       "type": "number"
